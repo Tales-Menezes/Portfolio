@@ -8,7 +8,7 @@
 # Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {
-  name = "us-east-1"
+  name = "eu-west-2"
 }
 
 # Define the VPC 
@@ -59,12 +59,7 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.vpc.id
-
-  /*   route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
-  } */
+  vpc_id = aws_vpc.vpc.id 
   tags = local.common_tags
 }
 
@@ -88,18 +83,3 @@ resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.vpc.id
   tags   = local.common_tags
 }
-
-# Create EIP for NAT Gateway
-/* resource "aws_eip" "nat_gateway_eip" {
-  domain     = "vpc"
-  depends_on = [aws_internet_gateway.internet_gateway]
-  tags       = local.common_tags
-} */
-
-# Create NAT Gateway
-/* resource "aws_nat_gateway" "nat_gateway" {
-  depends_on    = [aws_subnet.public_subnets]
-  allocation_id = aws_eip.nat_gateway_eip.id
-  subnet_id     = aws_subnet.public_subnets["public_subnet_1"].id
-  tags          = local.common_tags
-} */
