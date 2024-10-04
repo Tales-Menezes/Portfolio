@@ -1,7 +1,7 @@
 
 # ############################################################################################################# #
 # In this file we declare the remote backend that will manage the state file configuration for the App.         #
-# It defines the required providers and the version contrains used for this application.                        #
+# It defines the required providers and the version constrains used for this application.                        #
 # It defines the version of Terraform that will be used.                                                        #
 # ############################################################################################################# #
 
