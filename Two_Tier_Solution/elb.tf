@@ -10,8 +10,11 @@ resource "aws_lb" "elb" {
   name               = var.lb_name
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.web_app_vpc.id, aws_security_group.elb_sg.id]
-  subnets            = [for subnet in aws_subnet.public_subnets : subnet.id]
+  security_groups = [
+    aws_security_group.web_app_vpc.id,
+    aws_security_group.elb_sg.id
+  ]
+  subnets = [for subnet in aws_subnet.public_subnets : subnet.id]
 
   tags = local.common_tags
 }
@@ -26,7 +29,8 @@ resource "aws_lb_target_group" "target_group" {
   tags = local.common_tags
 }
 
-# Loops over each ALB and sets up a listener on port 80 for HTTP requests and forward income requests to the target group
+# Loops over each ALB and sets up a listener on port 80 for HTTP requests 
+# and forward income requests to the target group
 resource "aws_lb_listener" "front_end" {
   for_each          = aws_lb.elb               # Ensure it loops over each load balancer
   load_balancer_arn = aws_lb.elb[each.key].arn # Refer to the specific load balancer instance
@@ -49,5 +53,8 @@ resource "aws_lb_target_group_attachment" "tg-attachment" {
   port             = 80
 
   # Explicitly add depends_on to avoid timing issues
-  depends_on = [aws_lb_target_group.target_group, aws_instance.app_server]
+  depends_on = [
+    aws_lb_target_group.target_group,
+    aws_instance.app_server
+  ]
 }

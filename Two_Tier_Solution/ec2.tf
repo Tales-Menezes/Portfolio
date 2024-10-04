@@ -1,18 +1,12 @@
 
 # ############################################################################################################# #
-# This file defines AWS region where the app will be hosted.                                                    #
-# Search for the latest Ubuntu 20.04 AMI Image from Amazon AMI Catalog.                                         #
+# This file searches for the latest Ubuntu 20.04 AMI Image from Amazon AMI Catalog.                             #
 # Generate a private key pair to connect to EC2 Instance via SSH.                                               #
 # Launch one EC2 instance in EACH public subnet using the latest Ubuntu 20.04 AMI image.                        #
 #   Connect to EC2 via SSH using the private key generated.                                                     #
 #   Use 'local-exec' provisioner to execute commands inside the EC2 instance.                                   #
 #   Download the application from a git repository and install it remotely.                                     #
 # ############################################################################################################# #
-
-# Define AWS region where the app will be hosted
-provider "aws" {
-  region = var.aws_region
-}
 
 # Terraform Data Block - To Lookup Latest Ubuntu 20.04 AMI Image
 data "aws_ami" "ubuntu" {
@@ -48,11 +42,16 @@ resource "local_file" "private_key_pem" {
 
 # Terraform Resource Block - To build two EC2 instances. One in each public subnet
 resource "aws_instance" "app_server" {
-  for_each                    = aws_subnet.public_subnets
-  ami                         = data.aws_ami.ubuntu.id
-  instance_type               = var.ec2_type
-  subnet_id                   = aws_subnet.public_subnets[each.key].id                                 # each public subnet
-  security_groups             = [aws_security_group.ingress_ssh.id, aws_security_group.web_app_vpc.id] # Allow access from SSH and from the ELB only
+  for_each      = aws_subnet.public_subnets
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.ec2_type
+  subnet_id     = aws_subnet.public_subnets[each.key].id # each public subnet
+
+  # Allow access from SSH and from the ELB only
+  security_groups = [
+    aws_security_group.ingress_ssh.id,
+    aws_security_group.web_app_vpc.id
+  ]
   associate_public_ip_address = true
   key_name                    = aws_key_pair.generated.key_name
 

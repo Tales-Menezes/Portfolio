@@ -46,6 +46,12 @@ resource "aws_subnet" "public_subnets" {
   }
 }
 
+# Create Internet Gateway
+resource "aws_internet_gateway" "internet_gateway" {
+  vpc_id = aws_vpc.vpc.id
+  tags   = local.common_tags
+}
+
 # Create route tables for public and private subnets
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.vpc.id
@@ -58,8 +64,8 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table" "private_route_table" {
-  vpc_id = aws_vpc.vpc.id 
-  tags = local.common_tags
+  vpc_id = aws_vpc.vpc.id
+  tags   = local.common_tags
 }
 
 # Create route table associations
@@ -75,10 +81,4 @@ resource "aws_route_table_association" "private" {
   for_each       = aws_subnet.private_subnets
   subnet_id      = each.value.id
   route_table_id = aws_route_table.private_route_table.id
-}
-
-# Create Internet Gateway
-resource "aws_internet_gateway" "internet_gateway" {
-  vpc_id = aws_vpc.vpc.id
-  tags   = local.common_tags
 }

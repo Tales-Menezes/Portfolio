@@ -1,8 +1,10 @@
 
 # ############################################################################################################# #
-# In this file we declare the remote backend that will manage the state file configuration for the App.         #
-# It defines the required providers and the version constrains used for this application.                        #
-# It defines the version of Terraform that will be used.                                                        #
+# This file defines:                                                                                            #
+# The remote backend that will manage the state file configuration for the App.                                 #
+# The required providers and the version constrains used for this application.                                  #
+# The version of Terraform that will be used.                                                                   #
+# The AWS region where the app will be hosted.                                                                  #
 # ############################################################################################################# #
 
 terraform {
@@ -32,4 +34,9 @@ terraform {
       version = "2.5.2"
     }
   }
+}
+
+# Define AWS region where the app will be hosted
+provider "aws" {
+  region = var.aws_region
 }
