@@ -1,4 +1,3 @@
-
 # ############################################################################################################# #
 # This file deploys a VPC with 2 private and 2 public subnets                                                   #
 # Creates a route table and associate to each subnet                                                            #
